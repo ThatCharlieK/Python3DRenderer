@@ -9,16 +9,19 @@ import constants
 from geometry import Mesh
 from camera import Camera
 from renderer import Renderer
+import time
 
 if __name__ == "__main__":
-    camera = Camera(Vector3(30, 80, 50), Vector3(0, 0, 0))
+    camera = Camera(Vector3(30, 20, 30), Vector3(0, 0, 0))
     renderer = Renderer(camera)
-    cube = generate_geometry.generate_cube(Vector3(10, 10, 10), 20)
-    cube2 = generate_geometry.generate_cube(Vector3(10, 50, 10), 30)
-    meshes = [cube, cube2]
+    cube = generate_geometry.generate_cube(Vector3(0, 0, 0), 20)
+
     running = True
     while running:
+        cube.rotate_mesh(Vector3(0.005, 0.005, 0))
+        meshes = [cube]
         renderer.render_meshes(meshes)
+        time.sleep(0.005)
 
     pygame.quit()
     sys.exit()
