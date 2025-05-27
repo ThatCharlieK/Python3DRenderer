@@ -25,14 +25,17 @@ class Renderer:
         forward = (self.camera.look_at - self.camera.position).normalized()
         right = forward.cross(Vector3(0, 1, 0)).normalized()
         up = right.cross(forward)
-
+        # this is a change of basis vector to change from the normal 3d coordinate basis
+        # to the camera's basis vectors
         rotation = np.array([
             [right.x, right.y, right.z, 0],
             [up.x, up.y, up.z, 0],
             [-forward.x, -forward.y, -forward.z, 0],
             [0, 0, 0, 1]
         ])
-
+        # if the camera is moved, the translation matrix essentially "undoes"
+        # that camera movement so that its at (0, 0, 0)
+        # but instead of moving the camera back, it moves the entire world back
         translation = np.array([
             [1, 0, 0, -self.camera.position.x],
             [0, 1, 0, -self.camera.position.y],
@@ -62,7 +65,6 @@ class Renderer:
             [aspect_ratio * fov_rad, 0, 0, 0],
             # scale y axis based on vertical FOV
             [0, fov_rad, 0, 0],
-
             [0, 0, q, -near * q],
             [0, 0, 1, 0]
         ])
@@ -78,7 +80,7 @@ class Renderer:
         # prevent division by 0
         if w == 0:
             return None
-
+        # normalized device coordinates
         x_ndc = transformed[0][0] / w
         y_ndc = transformed[1][0] / w
 
