@@ -20,6 +20,23 @@ class Mesh:
         self.points = points
         self.edges = edges
 
+    def scale_mesh(self, scale: Vector3):
+        scale = np.array([
+            [scale.x, 0, 0],
+            [0, scale.y, 0],
+            [0, 0, scale.z]
+        ])
+        for point in self.points:
+            self.__apply_matrix_to_point(point, scale)
+
+    @staticmethod
+    def __apply_matrix_to_point(point: Vector3, matrix: np.array):
+        np_point = np.array([point.x, point.y, point.z])
+        result_point = matrix @ np_point
+        point.x = result_point[0]
+        point.y = result_point[1]
+        point.z = result_point[2]
+
     def rotate_mesh(self, rotation: Vector3):
         y = rotation.x
         b = rotation.y
@@ -32,10 +49,6 @@ class Mesh:
         ])
 
         for point in self.points:
-            np_point = np.array([point.x, point.y, point.z])
-            rotated_point = rotation @ np_point
-            point.x = rotated_point[0]
-            point.y = rotated_point[1]
-            point.z = rotated_point[2]
+            self.__apply_matrix_to_point(point, rotation)
 
 
