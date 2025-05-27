@@ -1,13 +1,12 @@
 import pygame
-import sys
 from typing import Optional, List, Tuple
 import numpy as np
-import generate_geometry
 import math
 from vectors import Vector2, Vector3
 import constants
 from geometry import Mesh
 from camera import Camera
+from game_object import GameObject
 
 
 class Renderer:
@@ -105,9 +104,10 @@ class Renderer:
         for point in mesh.points:
             self.draw_point(point)
 
-    def render_meshes(self, meshes: list[Mesh]):
+    def render_gameobjects(self, game_objects: List[GameObject]):
+
         self.screen.fill(constants.WHITE)
-        for mesh in meshes:
-            self.__render_mesh(mesh)
+        for game_object in game_objects:
+            self.__render_mesh(game_object.mesh)
         pygame.event.get()
         pygame.display.flip()

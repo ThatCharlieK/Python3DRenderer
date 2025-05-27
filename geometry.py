@@ -1,54 +1,39 @@
-import pygame
-import sys
 from typing import Optional, List, Tuple
-import numpy as np
-import generate_geometry
-import math
 from vectors import Vector2, Vector3
-import constants
-from math import cos, sin
+from math import sin, cos
 import numpy as np
 
 
 class Mesh:
     def __init__(self, points: List[Vector3], edges: List[Tuple[int, int]]):
         """
-        :param points: what verticies of the matrix in 3d
+        :param points: what vertices of the matrix in 3d
         :param edges: each edge is a line between 2 points, represented by
         (index in points for the starting point, index in points for the ending point)
         """
         self.points = points
         self.edges = edges
 
-    def scale_mesh(self, scale: Vector3):
-        scale = np.array([
-            [scale.x, 0, 0],
-            [0, scale.y, 0],
-            [0, 0, scale.z]
-        ])
-        for point in self.points:
-            self.__apply_matrix_to_point(point, scale)
 
-    @staticmethod
-    def __apply_matrix_to_point(point: Vector3, matrix: np.array):
-        np_point = np.array([point.x, point.y, point.z])
-        result_point = matrix @ np_point
-        point.x = result_point[0]
-        point.y = result_point[1]
-        point.z = result_point[2]
+def generate_cube(center: Vector3, width: float) -> Mesh:
+    half = width / 2
 
-    def rotate_mesh(self, rotation: Vector3):
-        y = rotation.x
-        b = rotation.y
-        a = rotation.z
-        # see https://en.wikipedia.org/wiki/Rotation_matrix for rotation matrix
-        rotation = np.array([
-            [cos(b) * cos(y), sin(a) * sin(b) * cos(y) - cos(a) * sin(y), cos(a) * sin(b) * cos(y) + sin(a)*sin(y)],
-            [cos(b) * sin(y), sin(a) * sin(b) * sin(y) + cos(a) * cos(y), cos(a) * sin(b) * sin(y) - sin(a) * cos(y)],
-            [-sin(b), sin(a) * cos(b), cos(a) * cos(b)]
-        ])
+    vertices = [
+        Vector3(center.x - half, center.y - half, center.z - half),  # 0
+        Vector3(center.x - half, center.y + half, center.z - half),  # 1
+        Vector3(center.x - half, center.y - half, center.z + half),  # 2
+        Vector3(center.x - half, center.y + half, center.z + half),  # 3
+        Vector3(center.x + half, center.y - half, center.z - half),  # 4
+        Vector3(center.x + half, center.y + half, center.z - half),  # 5
+        Vector3(center.x + half, center.y - half, center.z + half),  # 6
+        Vector3(center.x + half, center.y + half, center.z + half),  # 7
+    ]
+    edges = [
+        (0, 1), (1, 3), (3, 2), (2, 0),  # left face
+        (4, 5), (5, 7), (7, 6), (6, 4),  # right face
+        (0, 4), (1, 5), (2, 6), (3, 7)   # connecting edges between faces
+    ]
+    return Mesh(vertices, edges)
 
-        for point in self.points:
-            self.__apply_matrix_to_point(point, rotation)
 
 
